@@ -1,3 +1,5 @@
+Brute force
+
 To get critical connections:
 For all edges:
 1. Remove an edge
