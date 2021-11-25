@@ -1,0 +1,64 @@
+class Solution {
+    public List<List<Integer>> criticalConnections(int n, List<List<Integer>> connections) {
+        // brute force
+        // remove edge, check if graph is connected, that means it is a critical connection
+        
+        List<List<Integer>> adjList = buildAdjList(n, connections);
+        List<List<Integer>> criticalEdges = new ArrayList<>();
+        for(List<Integer> conn: connections) {
+            //remove edge
+            
+            adjList.get(conn.get(0)).remove(conn.get(1));
+            adjList.get(conn.get(1)).remove(conn.get(0));
+            
+            // check number of components
+            if(numOfComps(n, adjList)>1) {
+                criticalEdges.add(conn);
+            }
+            
+            adjList.get(conn.get(0)).add(conn.get(1));
+            adjList.get(conn.get(1)).add(conn.get(0));
+            
+        }
+        
+        return criticalEdges;
+        
+    }
+    
+    public List<List<Integer>> buildAdjList(int n, List<List<Integer>> connections) {
+        List<List<Integer>> adjList = new ArrayList<>();
+        
+        for(int i=0; i<n; i++) {
+            adjList.add(new ArrayList<>());
+        }
+        
+        for(List<Integer> edge: connections) {
+            adjList.get(edge.get(0)).add(edge.get(1));
+            adjList.get(edge.get(1)).add(edge.get(0));
+        }
+        
+        return adjList;
+    }
+    
+    public int numOfComps(int n, List<List<Integer>> adjList) {
+        int[] visited = new int[n];
+        int numComponents = 0;
+        for(int i=0; i<n; i++) {
+            if(visited[i] == 0) {
+                visit(i, adjList, visited);
+                numComponents++;
+            }
+        }
+        
+        return numComponents;
+    }
+    
+    public void visit(int i, List<List<Integer>> adjList, int[] visited) {
+        if(visited[i] == 0) {
+            visited[i] = 1;
+            for(int node: adjList.get(i)) {
+                visit(node, adjList, visited);
+            }
+        }
+    }
+}
