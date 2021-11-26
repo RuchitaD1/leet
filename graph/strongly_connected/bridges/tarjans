@@ -1,0 +1,60 @@
+int time;
+    public List<List<Integer>> criticalConnections(int n, List<List<Integer>> connections) {
+        // Tarjans
+        
+        //build adj
+        List<List<Integer>> adjList = buildAdjList(n, connections);
+        
+        List<List<Integer>> criticalEdges = new ArrayList<>();
+        
+        int[] disc = new int[n];
+        int[] low = new int[n];
+        time = -1;
+        int[] visited = new int[n];
+        dfs(0, 0, disc, low, visited, adjList, criticalEdges);
+        
+        return criticalEdges;
+        
+    }
+    
+    public List<List<Integer>> buildAdjList(int n, List<List<Integer>> connections) {
+        List<List<Integer>> adjList = new ArrayList<>();
+        
+        for(int i=0; i<n; i++) {
+            adjList.add(new ArrayList<>());
+        }
+        
+        for(List<Integer> edge: connections) {
+            adjList.get(edge.get(0)).add(edge.get(1));
+            adjList.get(edge.get(1)).add(edge.get(0));
+        }
+        
+        return adjList;
+    }
+    
+    public void dfs(int root, int parent, int[] disc, int[] low, int[] visited, List<List<Integer>> adjList, List<List<Integer>> criticalEdges) {
+        if(visited[root] == 0) {
+            visited[root] = 1;
+            time++;
+            disc[root] = time;
+            low[root] = time;
+            
+            for(int node: adjList.get(root)) {
+                if(node!=parent){
+                dfs(node, root, disc, low, visited, adjList, criticalEdges);
+                    
+                    
+                // get the earliest discovered node that root is connected to through node
+                if(low[root]>low[node]) {
+                    low[root] = low[node];
+                }
+                
+                // check if node is connected to another node which was discovered before root
+                if(low[node]>disc[root]) {
+                    criticalEdges.add(Arrays.asList(node, root));
+                }
+                }
+
+            }
+        }
+    }
